@@ -17,7 +17,7 @@ class AdminDashboardPage extends StatelessWidget {
     final user = authController.currentUser.value;
 
     // 🔹 fetch summary admin (status lembur semua user)
-    summaryController.fetchAdminSummary(authController.token.value);
+    summaryController.fetchAdminSummary();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6FA),

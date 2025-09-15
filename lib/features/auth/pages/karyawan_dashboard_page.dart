@@ -7,6 +7,7 @@ import '../controllers/auth_controller.dart';
 import '../../overtime/controllers/ess_overtime_total_controller.dart';
 import '../../overtime/controllers/overtime_summary_controller.dart';
 import '../../../routes/app_routes.dart';
+import '';
 
 class EmployeeDashboardPage extends StatelessWidget {
   const EmployeeDashboardPage({super.key});
@@ -16,10 +17,11 @@ class EmployeeDashboardPage extends StatelessWidget {
     final authController = Get.find<AuthController>();
     final overtimeTotalController = Get.put(EssOvertimeTotalController());
     final summaryController = Get.put(OvertimeSummaryController());
+
     final user = authController.currentUser.value;
 
-    // 🔹 fetch summary khusus user ini
-    summaryController.fetchUserSummary(authController.token.value);
+    // 🔹 Fetch summary khusus user
+    summaryController.fetchUserSummary();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6FA),
@@ -38,27 +40,14 @@ class EmployeeDashboardPage extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 20),
         child: Column(
           children: [
-            // 🔹 HEADER
             _buildHeader(user),
-
             const SizedBox(height: 24),
-
-            // 🔹 STATISTIK
             Obx(() => _buildStats(overtimeTotalController)),
-
             const SizedBox(height: 24),
-
-            // 🔹 SUMMARY STATUS (dengan pie chart)
             Obx(() => _buildSummaryStatus(summaryController)),
-
             const SizedBox(height: 24),
-
-            // 🔹 INFO
             _buildInfoCard(),
-
             const SizedBox(height: 28),
-
-            // 🔹 MENU GRID
             _buildMenuGrid(),
           ],
         ),
@@ -66,7 +55,7 @@ class EmployeeDashboardPage extends StatelessWidget {
     );
   }
 
-  // =================== HEADER ===================
+  // ================= HEADER =================
   Widget _buildHeader(user) {
     return Container(
       width: double.infinity,
@@ -119,7 +108,7 @@ class EmployeeDashboardPage extends StatelessWidget {
     );
   }
 
-  // =================== STATISTIK ===================
+  // ================= STATISTIK =================
   Widget _buildStats(EssOvertimeTotalController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -128,10 +117,8 @@ class EmployeeDashboardPage extends StatelessWidget {
         children: [
           Expanded(
             child: _StatCard(
-              title: 'Total Lembur Anda Bulan ini',
-              value: controller.isLoading.value
-                  ? "..."
-                  : controller.totalFormatted,
+              title: 'Total Lembur Anda Bulan Ini',
+              value: controller.isLoading.value ? "..." : controller.totalFormatted,
               icon: Icons.access_time,
             ),
           ),
@@ -140,7 +127,7 @@ class EmployeeDashboardPage extends StatelessWidget {
     );
   }
 
-  // =================== SUMMARY STATUS ===================
+  // ================= SUMMARY STATUS =================
   Widget _buildSummaryStatus(OvertimeSummaryController controller) {
     if (controller.isLoading.value) {
       return const Center(child: CircularProgressIndicator());
@@ -169,8 +156,10 @@ class EmployeeDashboardPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Summary Status Lembur Anda",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const Text(
+                "Summary Status Lembur Anda",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 12),
 
               // 🔹 Pie Chart
@@ -179,27 +168,7 @@ class EmployeeDashboardPage extends StatelessWidget {
                 child: PieChart(
                   PieChartData(
                     sections: summaryData.entries.map((e) {
-                      Color sectionColor;
-                      switch (e.key) {
-                        case 'Approved':
-                          sectionColor = Colors.green;
-                          break;
-                        case 'Pending':
-                          sectionColor = Colors.orange;
-                          break;
-                        case 'Rejected':
-                          sectionColor = Colors.red;
-                          break;
-                        case 'Cancel':
-                          sectionColor = Colors.grey;
-                          break;
-                        case 'Withdraw':
-                          sectionColor = Colors.blueGrey;
-                          break;
-                        default:
-                          sectionColor = Colors.blue;
-                          break;
-                      }
+                      final sectionColor = _statusColor(e.key);
                       return PieChartSectionData(
                         value: e.value.toDouble(),
                         title: e.value > 0 ? "${e.value}" : "",
@@ -218,7 +187,7 @@ class EmployeeDashboardPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // 🔹 Legends (Chip)
+              // 🔹 Legends
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
@@ -237,7 +206,25 @@ class EmployeeDashboardPage extends StatelessWidget {
     );
   }
 
-  // =================== INFO CARD ===================
+  // Warna status
+  static Color _statusColor(String status) {
+    switch (status) {
+      case 'Approved':
+        return Colors.green;
+      case 'Pending':
+        return Colors.orange;
+      case 'Rejected':
+        return Colors.red;
+      case 'Cancel':
+        return Colors.grey;
+      case 'Withdraw':
+        return Colors.blueGrey;
+      default:
+        return Colors.blue;
+    }
+  }
+
+  // ================= INFO CARD =================
   Widget _buildInfoCard() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -247,8 +234,7 @@ class EmployeeDashboardPage extends StatelessWidget {
         child: const Padding(
           padding: EdgeInsets.all(16.0),
           child: Text(
-            'Ajukan lembur sesuai kebutuhan.\n'
-            'Pantau status pengajuan Anda secara berkala.',
+            'Ajukan lembur sesuai kebutuhan.\nPantau status pengajuan Anda secara berkala.',
             style: TextStyle(fontSize: 14),
           ),
         ),
@@ -256,7 +242,7 @@ class EmployeeDashboardPage extends StatelessWidget {
     );
   }
 
-  // =================== MENU GRID ===================
+  // ================= MENU GRID =================
   Widget _buildMenuGrid() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -288,11 +274,12 @@ class EmployeeDashboardPage extends StatelessWidget {
   }
 }
 
-// =================== STAT CARD ===================
+// ================= STAT CARD =================
 class _StatCard extends StatelessWidget {
   final String title;
   final String value;
   final IconData icon;
+
   const _StatCard({
     required this.title,
     required this.value,
@@ -323,6 +310,7 @@ class _StatCard extends StatelessWidget {
             Text(
               title,
               style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -331,12 +319,13 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-// =================== MENU CARD ===================
+// ================= MENU CARD =================
 class _MenuCard extends StatelessWidget {
   final String title;
   final IconData icon;
   final Color color;
   final VoidCallback onTap;
+
   const _MenuCard({
     required this.title,
     required this.icon,
@@ -383,7 +372,7 @@ class _MenuCard extends StatelessWidget {
   }
 }
 
-// =================== STATUS CHIP ===================
+// ================= STATUS CHIP =================
 class _StatusChip extends StatelessWidget {
   final String label;
   final int count;

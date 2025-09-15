@@ -6,10 +6,10 @@ class OvertimeSummaryController extends GetxController {
   var isLoading = false.obs;
   var summary = Rxn<OvertimeSummary>();
 
-  Future<void> fetchUserSummary(String token) async {
+  Future<void> fetchUserSummary() async {
     try {
       isLoading.value = true;
-      summary.value = await OvertimeSummaryService.getUserSummary(token);
+      summary.value = await OvertimeSummaryService.getUserSummary();
     } catch (e) {
       Get.snackbar("Error", e.toString());
     } finally {
@@ -17,10 +17,10 @@ class OvertimeSummaryController extends GetxController {
     }
   }
 
-  Future<void> fetchAdminSummary(String token) async {
+  Future<void> fetchAdminSummary() async {
     try {
       isLoading.value = true;
-      summary.value = await OvertimeSummaryService.getAdminSummary(token);
+      summary.value = await OvertimeSummaryService.getAdminSummary();
     } catch (e) {
       Get.snackbar("Error", e.toString());
     } finally {

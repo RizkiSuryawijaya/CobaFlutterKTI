@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/overtime_summary.dart';
+import '../models/ess_overtime_summary.dart';
 import '../../../core/api_service.dart';
 
 class OvertimeSummaryService {

@@ -1,33 +1,42 @@
-// file: lib/pages/config_create_page.dart
+// file: lib/pages/config_update_page.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../controllers/ess_config_overtime_controller.dart';
-import '../../models/ess_config_overtime.dart';
+import '../../controllers/ess_overtime_config_controller.dart';
+import '../../models/ess_overtime_config.dart';
 
-class ConfigCreatePage extends StatelessWidget {
+class ConfigUpdatePage extends StatelessWidget {
   final controller = Get.find<ConfigOvertimeController>();
   final _formKey = GlobalKey<FormState>();
   final _hourCtrl = TextEditingController();
   final _minuteCtrl = TextEditingController();
   final _restCtrl = TextEditingController();
 
-  ConfigCreatePage({super.key});
+  ConfigUpdatePage({super.key}) {
+    // Pre-fill data dari Get.arguments
+    final EssConfigOvertime config = Get.arguments;
+    final totalHours = config.monthlyTotalDurationHours.floor();
+    final totalMinutes = ((config.monthlyTotalDurationHours - totalHours) * 60).round();
+    _hourCtrl.text = totalHours.toString();
+    _minuteCtrl.text = totalMinutes == 0 ? '' : totalMinutes.toString();
+    _restCtrl.text = config.restTimeMinutes.toString();
+  }
 
   // Konversi jam + menit ke double jam
   double _convertHourMinuteToDouble(String hourText, String minuteText) {
     final hours = int.tryParse(hourText) ?? 0;
-    // Otomatis atur menit ke 0 jika string kosong
     final minutes = int.tryParse(minuteText.isEmpty ? '0' : minuteText) ?? 0;
     return hours + minutes / 60;
   }
 
   @override
   Widget build(BuildContext context) {
+    final EssConfigOvertime config = Get.arguments;
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         title: const Text(
-          "Tambah Pengaturan Lembur",
+          "Ubah Pengaturan Lembur",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -35,7 +44,6 @@ class ConfigCreatePage extends StatelessWidget {
           ),
         ),
         backgroundColor: Colors.blue.shade800,
-        foregroundColor: Colors.white,
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -108,26 +116,27 @@ class ConfigCreatePage extends StatelessWidget {
               ElevatedButton.icon(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    final config = EssConfigOvertime(
-                      id: '',
+                    final updatedConfig = EssConfigOvertime(
+                      id: config.id,
                       monthlyTotalDurationHours: _convertHourMinuteToDouble(
                         _hourCtrl.text,
                         _minuteCtrl.text,
                       ),
-                      restTimeMinutes: _restCtrl.text.isEmpty ? 0 : int.parse(_restCtrl.text),
-                      createdAt: DateTime.now(),
+                      restTimeMinutes:
+                          _restCtrl.text.isEmpty ? 0 : int.parse(_restCtrl.text),
+                      createdAt: config.createdAt,
                       updatedAt: DateTime.now(),
                     );
-                    controller.createConfig(config);
+                    controller.updateConfig(config.id, updatedConfig);
                   }
                 },
-                icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+                icon: const Icon(Icons.save, color: Colors.white),
                 label: const Text(
-                  "Tambah Pengaturan",
+                  "Simpan Perubahan",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade600,
+                  backgroundColor: Colors.green.shade600,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(

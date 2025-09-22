@@ -1,7 +1,7 @@
 // File: models/ess_overtime_request.dart
 
 import 'package:intl/intl.dart';
-import '../../reason/models/ess_reason_ot.dart';
+import '../../reason/models/ess-overtime-reason.dart';
 import '../../auth/models/user.dart';
 
 class EssOvertimeRequest {

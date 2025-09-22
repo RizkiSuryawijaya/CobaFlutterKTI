@@ -1,37 +1,35 @@
 // controllers/ess_overtime_withdraw_controller.dart
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../models/ess_overtime_request.dart';
 import '../services/ess_overtime_withdraw_service.dart';
 
 class EssOvertimeWithdrawController extends GetxController {
   var isLoading = false.obs;
-  var withdrawRequests = <EssOvertimeRequest>[].obs;
 
+  Future<void> withdrawOvertime(String overtimeId) async {
+    try {
+      isLoading.value = true;
+      await EssOvertimeWithdrawService.withdraw(overtimeId);
 
-Future<void> fetchWithdraws() async {
-  try {
-    isLoading.value = true;
-    final fetched = await EssOvertimeWithdrawService.getAllWithdraw();
-    withdrawRequests.assignAll(fetched);
-  } catch (e) {
-    Get.snackbar("Error", "Gagal mengambil data withdraw: $e");
-  } finally {
-    isLoading.value = false;
+      // Tutup modal atau halaman setelah berhasil
+      Get.back();
+
+      // Tampilkan notifikasi sukses
+      Get.snackbar(
+        "Berhasil 🎉",
+        "Lembur berhasil ditarik!",
+        backgroundColor: Colors.green.shade600,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        "Gagal 🙁",
+        "Gagal menarik lembur: $e",
+        backgroundColor: Colors.red.shade600,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
-
-Future<void> withdrawOvertime(String overtimeId) async {
-  try {
-    isLoading.value = true;
-    await EssOvertimeWithdrawService.withdraw(overtimeId); // PATCH
-    Get.snackbar("Success", "Overtime berhasil ditarik!");
-    fetchWithdraws(); // refresh list withdraw
-  } catch (e) {
-    Get.snackbar("Error", "Gagal menarik lembur: $e");
-  } finally {
-    isLoading.value = false;
-  }
-}
-
-
 }

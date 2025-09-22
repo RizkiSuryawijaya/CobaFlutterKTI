@@ -24,8 +24,6 @@ abstract class AppRoutes {
   static const updateReason = '/reason-update';
 
 
-  // Withdraw Overtime
-  static const overtimewithdraw = '/overtime-withdraw'; 
 
 
 
@@ -36,5 +34,6 @@ abstract class AppRoutes {
   static const configOvertimeUpdate = '/config-overtime/update';
 
 
+   static const splash = '/splash';
 
 }

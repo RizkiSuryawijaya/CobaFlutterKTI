@@ -3,10 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import '../controllers/ess_overtime_request_controller.dart';
-import '../../reason/controllers/ess_reason_ot_controller.dart';
-import '../../reason/models/ess_reason_ot.dart';
-import '../models/ess_overtime_request.dart';
+import '../../../controllers/ess_overtime_request_controller.dart';
+import '../../../../reason/controllers/ess-overtime-reason-controller.dart';
+import '../../../../reason/models/ess-overtime-reason.dart';
+import '../../../models/ess_overtime_request.dart';
+import '../dialogs/ess_overtime_reason_picker_dialog.dart'; // ✅ pakai dialog reusable
 
 class UpdateOvertimePage extends StatefulWidget {
   final EssOvertimeRequest lembur;
@@ -58,14 +59,8 @@ class _UpdateOvertimePageState extends State<UpdateOvertimePage> {
     _remarksController = TextEditingController(text: widget.lembur.remarks);
     _reasonController = TextEditingController();
 
-    // Inisialisasi alasan lembur
     _initializeReason();
-
-    // Gunakan ever untuk berjaga-jaga kalau data reasons belum siap
-    ever(reasonController.reasons, (_) {
-      _initializeReason();
-    });
-
+    ever(reasonController.reasons, (_) => _initializeReason());
     _updateIsNextDay();
   }
 
@@ -79,16 +74,12 @@ class _UpdateOvertimePageState extends State<UpdateOvertimePage> {
     super.dispose();
   }
 
-  /// Coba cari reason berdasarkan ID, kalau gagal fallback ke name
   void _initializeReason() {
     if (reasonController.reasons.isNotEmpty) {
       EssReasonOT? reason = reasonController.reasons.firstWhereOrNull(
-        (r) =>
-            r.reasonId.toString() ==
-            widget.lembur.reason?.reasonId.toString(),
+        (r) => r.reasonId.toString() == widget.lembur.reason?.reasonId.toString(),
       );
 
-      // fallback ke name kalau reasonId tidak ketemu
       reason ??= reasonController.reasons.firstWhereOrNull(
         (r) => r.name == widget.lembur.reason?.name,
       );
@@ -152,21 +143,15 @@ class _UpdateOvertimePageState extends State<UpdateOvertimePage> {
       context: context,
       initialTime: TimeOfDay(
         hour: int.tryParse(
-              (isStart
-                      ? _startTimeController.text
-                      : _endTimeController.text)
-                  .split(':')[0],
-            ) ??
+                (isStart ? _startTimeController.text : _endTimeController.text)
+                        .split(':')[0]) ??
             0,
         minute: int.tryParse(
-              (isStart
-                      ? _startTimeController.text
-                      : _endTimeController.text)
-                  .split(':')[1],
-            ) ??
+                (isStart ? _startTimeController.text : _endTimeController.text)
+                        .split(':')[1]) ??
             0,
       ),
-      builder: (BuildContext context, Widget? child) {
+      builder: (context, child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
           child: child!,
@@ -191,7 +176,7 @@ class _UpdateOvertimePageState extends State<UpdateOvertimePage> {
   Future<void> _showReasonPicker() async {
     final selected = await showDialog<EssReasonOT>(
       context: context,
-      builder: (context) => _ReasonPickerDialog(
+      builder: (context) => ReasonPickerDialog(
         reasons: reasonController.reasons,
         initialSelected: _selectedReason,
       ),
@@ -260,9 +245,7 @@ class _UpdateOvertimePageState extends State<UpdateOvertimePage> {
                       icon: Icons.calendar_today,
                       onTap: () => _selectDate(context),
                       validator: (value) =>
-                          value == null || value.isEmpty
-                              ? 'Tanggal wajib diisi'
-                              : null,
+                          value == null || value.isEmpty ? 'Tanggal wajib diisi' : null,
                     ),
                     const SizedBox(height: 16),
                     _buildFormTitle("Detail Waktu Lembur"),
@@ -298,9 +281,7 @@ class _UpdateOvertimePageState extends State<UpdateOvertimePage> {
                     Obx(() {
                       if (reasonController.isLoading.value &&
                           reasonController.reasons.isEmpty) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
+                        return const Center(child: CircularProgressIndicator());
                       }
                       return _buildTextFormField(
                         controller: _reasonController,
@@ -308,9 +289,7 @@ class _UpdateOvertimePageState extends State<UpdateOvertimePage> {
                         icon: Icons.arrow_drop_down,
                         onTap: _showReasonPicker,
                         validator: (value) =>
-                            value == null || value.isEmpty
-                                ? 'Alasan wajib diisi'
-                                : null,
+                            value == null || value.isEmpty ? 'Alasan wajib diisi' : null,
                       );
                     }),
                     const SizedBox(height: 16),
@@ -330,9 +309,7 @@ class _UpdateOvertimePageState extends State<UpdateOvertimePage> {
                       return SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: controller.isLoading.value
-                              ? null
-                              : _submitForm,
+                          onPressed: controller.isLoading.value ? null : _submitForm,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue[900],
                             foregroundColor: Colors.white,
@@ -343,13 +320,10 @@ class _UpdateOvertimePageState extends State<UpdateOvertimePage> {
                             elevation: 4,
                           ),
                           child: controller.isLoading.value
-                              ? const CircularProgressIndicator(
-                                  color: Colors.white,
-                                )
+                              ? const CircularProgressIndicator(color: Colors.white)
                               : const Text(
                                   "Perbarui Lembur",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                         ),
                       );
@@ -398,8 +372,7 @@ class _UpdateOvertimePageState extends State<UpdateOvertimePage> {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.blue[900]!),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         suffixIcon: Icon(icon, color: Colors.grey[600]),
       ),
       validator: validator,
@@ -428,142 +401,6 @@ class _UpdateOvertimePageState extends State<UpdateOvertimePage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// Dialog picker alasan
-class _ReasonPickerDialog extends StatefulWidget {
-  final List<EssReasonOT> reasons;
-  final EssReasonOT? initialSelected;
-
-  const _ReasonPickerDialog({required this.reasons, this.initialSelected});
-
-  @override
-  State<_ReasonPickerDialog> createState() => _ReasonPickerDialogState();
-}
-
-class _ReasonPickerDialogState extends State<_ReasonPickerDialog> {
-  final TextEditingController _searchController = TextEditingController();
-  List<EssReasonOT> _filteredReasons = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _filteredReasons = widget.reasons;
-    _searchController.addListener(_filterReasons);
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  void _filterReasons() {
-    final query = _searchController.text.toLowerCase();
-    setState(() {
-      _filteredReasons = widget.reasons
-          .where((reason) => reason.name.toLowerCase().contains(query))
-          .toList();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.7,
-        child: Column(
-          children: [
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Alasan",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: "Cari alasan...",
-                  prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                ),
-              ),
-            ),
-            Expanded(
-              child: _filteredReasons.isEmpty
-                  ? const Center(
-                      child: Text("Tidak ada alasan yang ditemukan."),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16.0),
-                      itemCount: _filteredReasons.length,
-                      itemBuilder: (context, index) {
-                        final reason = _filteredReasons[index];
-                        return Card(
-                          elevation: 1,
-                          margin: const EdgeInsets.symmetric(vertical: 5),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          color: reason.reasonId ==
-                                  widget.initialSelected?.reasonId
-                              ? Colors.blue[100]
-                              : Colors.white,
-                          child: ListTile(
-                            title: Text(reason.name),
-                            onTap: () {
-                              Navigator.pop(context, reason);
-                            },
-                          ),
-                        );
-                      },
-                    ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[900],
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Center(
-                  child: Text(
-                    "-- Silahkan Pilih --",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

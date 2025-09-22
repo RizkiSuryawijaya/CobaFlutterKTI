@@ -10,6 +10,33 @@ class AuthController extends GetxController {
   var currentUser = Rxn<User>();
   var token = "".obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    loadUser(); // cek apakah user masih login saat app dibuka
+  }
+
+  Future<void> loadUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedToken = prefs.getString("token");
+    final savedUser = prefs.getString("user");
+
+    if (savedToken != null && savedUser != null) {
+      token.value = savedToken;
+      currentUser.value = User.fromJson(jsonDecode(savedUser));
+
+      // langsung arahkan ke dashboard sesuai role
+      if (currentUser.value?.role == "Admin") {
+        Get.offAllNamed(AppRoutes.adminDashboard);
+      } else {
+        Get.offAllNamed(AppRoutes.karyawanDashboard);
+      }
+    } else {
+      // kalau belum login, arahkan ke login
+      Get.offAllNamed(AppRoutes.login);
+    }
+  }
+
   Future<void> login(String email, String password) async {
     try {
       isLoading.value = true;
@@ -39,31 +66,28 @@ class AuthController extends GetxController {
   }
 
   Future<void> logout() async {
-  try {
-    final prefs = await SharedPreferences.getInstance();
-    final savedToken = prefs.getString("token");
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedToken = prefs.getString("token");
 
-    // Clear local data dulu biar UI langsung balik ke login
-    await prefs.clear();
-    currentUser.value = null;
-    token.value = "";
+      // hapus data lokal
+      await prefs.clear();
+      currentUser.value = null;
+      token.value = "";
 
-    // Redirect ke login tanpa nunggu API
-    Get.offAllNamed(AppRoutes.login);
+      // redirect ke login
+      Get.offAllNamed(AppRoutes.login);
 
-    // Opsional: panggil API logout di background (jangan ganggu UI)
-    if (savedToken != null && savedToken.isNotEmpty) {
-      try {
-        await AuthService.logout(savedToken);
-      } catch (e) {
-        // Bisa di-log aja, jangan block UI
-        print("Logout API error: $e");
+      // panggil API logout (opsional, di background)
+      if (savedToken != null && savedToken.isNotEmpty) {
+        try {
+          await AuthService.logout(savedToken);
+        } catch (e) {
+          print("Logout API error: $e");
+        }
       }
+    } catch (e) {
+      Get.snackbar("Error", "Gagal logout: $e");
     }
-  } catch (e) {
-    Get.snackbar("Error", "Gagal logout: $e");
   }
-}
-
-
 }

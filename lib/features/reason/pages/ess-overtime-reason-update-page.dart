@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/ess_reason_ot_controller.dart';
-import '../models/ess_reason_ot.dart';
+import '../controllers/ess-overtime-reason-controller.dart';
+import '../models/ess-overtime-reason.dart';
 
 class UpdateReasonPage extends StatelessWidget {
   final EssReasonOT reason;

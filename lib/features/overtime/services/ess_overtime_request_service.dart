@@ -5,7 +5,7 @@ import '../models/ess_overtime_request.dart';
 import '../../../core/api_service.dart';
 
 class EssOvertimeRequestService {
-  static const String _baseUrl = "${ApiService.baseUrl}/lembur";
+  static const String _baseUrl = "${ApiService.baseUrl}/overtime-requests";
   
   static Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();

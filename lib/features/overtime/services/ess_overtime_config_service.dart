@@ -1,19 +1,18 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/ess_config_overtime.dart';
+import '../models/ess_overtime_config.dart';
 import '../../../core/api_service.dart';
 
 class ConfigOvertimeService {
   static const String _baseUrl = "${ApiService.baseUrl}/config-overtime";
 
-  // Ambil token dari SharedPreferences
+  
   static Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
   }
 
-  // Buat header standar
   static Future<Map<String, String>> _getHeaders() async {
     final token = await _getToken();
     return {
@@ -87,3 +86,5 @@ class ConfigOvertimeService {
     }
   }
 }
+
+

@@ -6,7 +6,7 @@ import '../models/ess_overtime_request.dart';
 import '../../../core/api_service.dart';
 
 class EssOvertimeHistoryService {
-  static const String _baseUrl = "${ApiService.baseUrl}/lembur/history-overtime";
+  static const String _baseUrl = "${ApiService.baseUrl}/overtime-requests/history";
 
   static Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();

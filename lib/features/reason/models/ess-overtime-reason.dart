@@ -16,7 +16,6 @@ class EssReasonOT {
   factory EssReasonOT.fromJson(Map<String, dynamic> json) {
     return EssReasonOT(
       reasonId: json['reason_id']?.toString(),
-      // PERBAIKI DI SINI: Gunakan 'kodeReason' sesuai dengan respons backend
       kodeReason: (json['kodeReason'] ?? '').toString(),
       name: (json['name'] ?? '').toString(),
       createdAt: json['createdAt']?.toString(),
@@ -27,7 +26,6 @@ class EssReasonOT {
   Map<String, dynamic> toJson() {
     return {
       'reason_id': reasonId,
-      // PERBAIKI DI SINI: Gunakan 'kodeReason' agar konsisten saat mengirim data
       'kodeReason': kodeReason,
       'name': name,
       'createdAt': createdAt,

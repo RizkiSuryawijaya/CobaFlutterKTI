@@ -4,28 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../overtime/controllers/ess_overtime_history_controller.dart';
-import '../../overtime/controllers/ess_overtime_withdraw_controller.dart';
-import '../../overtime/models/ess_overtime_request.dart';
+import '../../controllers/ess_overtime_history_controller.dart';
+import '../../controllers/ess_overtime_withdraw_controller.dart';
+import '../../models/ess_overtime_request.dart';
+import '../overtime/widgets/status_badge.dart';
 
 class OvertimeHistoryDetailPage extends StatelessWidget {
   final EssOvertimeRequest lembur;
 
   const OvertimeHistoryDetailPage({super.key, required this.lembur});
-
-  Color _getStatusColor(String? status) {
-    if (status == null) return Colors.grey.shade400;
-    switch (status.toLowerCase()) {
-      case 'approved':
-        return Colors.green.shade700;
-      case 'rejected':
-        return Colors.red.shade700;
-      case 'pending':
-        return Colors.orange.shade700;
-      default:
-        return Colors.blue.shade700;
-    }
-  }
 
   void _confirmWithdraw(String id) {
     final EssOvertimeWithdrawController withdrawController =
@@ -58,8 +45,6 @@ class OvertimeHistoryDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = _getStatusColor(lembur.status);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -80,29 +65,26 @@ class OvertimeHistoryDetailPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // 🔹 Header + Status
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
+                    const Expanded(
                       child: Text(
                         "Detail Riwayat Lembur",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF0D47A1),
+                          color: Color(0xFF0D47A1),
                         ),
                       ),
                     ),
-                    Chip(
-                      label: Text(
-                        lembur.status ?? "Pending",
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      backgroundColor: statusColor,
-                    ),
+                    StatusBadge(status: lembur.status), // ✅ Pakai StatusBadge
                   ],
                 ),
                 const Divider(height: 20, thickness: 1),
+
+                // 🔹 Detail lembur
                 _buildDetailRow(
                   icon: Icons.event,
                   label: "Tanggal Mulai",
@@ -134,27 +116,29 @@ class OvertimeHistoryDetailPage extends StatelessWidget {
                 _buildDetailRow(
                   icon: Icons.notes,
                   label: "Catatan",
-                  value: lembur.remarks?.isNotEmpty == true ? lembur.remarks! : '-',
+                  value: lembur.remarks?.isNotEmpty == true
+                      ? lembur.remarks!
+                      : '-',
                 ),
-                
-                // 🆕 Tambahan: Detail Approval
+
+                // 🔹 Detail Approval
                 const SizedBox(height: 10),
-                Text(
+                const Text(
                   "Detail Persetujuan",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF0D47A1),
+                    color: Color(0xFF0D47A1),
                   ),
                 ),
                 const Divider(height: 10, thickness: 1),
                 _buildDetailRow(
                   icon: Icons.person_outline,
                   label: "Disetujui Oleh",
-                  // ❗ Isi dengan nama dari API setelah integrasi
-                  value: "-", 
+                  value: "-", // ❗ Nanti isi dari API
                 ),
 
+                // 🔹 Tombol withdraw (kalau masih pending)
                 if (lembur.status?.toLowerCase() == 'pending') ...[
                   const SizedBox(height: 12),
                   Align(
@@ -169,7 +153,9 @@ class OvertimeHistoryDetailPage extends StatelessWidget {
                       ),
                       icon: const Icon(Icons.undo),
                       label: const Text("Withdraw"),
-                      onPressed: () => _confirmWithdraw(lembur.overtimeId.toString()),
+                      onPressed: () => _confirmWithdraw(
+                        lembur.overtimeId.toString(),
+                      ),
                     ),
                   ),
                 ],

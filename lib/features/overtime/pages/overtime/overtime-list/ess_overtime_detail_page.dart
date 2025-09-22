@@ -1,28 +1,13 @@
 // File: pages/overtime_detail_page.dart
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import '../models/ess_overtime_request.dart';
-
+import '../../../models/ess_overtime_request.dart';
+import '../widgets/status_badge.dart';
 class OvertimeDetailPage extends StatelessWidget {
   final EssOvertimeRequest overtime;
 
   const OvertimeDetailPage({super.key, required this.overtime});
-
-  Color _getStatusColor(String? status) {
-    if (status == null) return Colors.grey.shade400;
-    switch (status.toLowerCase()) {
-      case "approved":
-        return Colors.green[700]!;
-      case "rejected":
-        return Colors.red[700]!;
-      case "pending":
-        return Colors.orange[700]!;
-      default:
-        return Colors.blue[700]!;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +17,7 @@ class OvertimeDetailPage extends StatelessWidget {
           "Detail Pengajuan Lembur",
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Colors.blue[900],
+        backgroundColor: const Color(0xFF0D47A1),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
@@ -70,7 +55,11 @@ class OvertimeDetailPage extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               overtime.user?.name ?? 'Tidak Diketahui',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black87),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.black87,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
@@ -79,25 +68,17 @@ class OvertimeDetailPage extends StatelessWidget {
             ),
           ],
         ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: _getStatusColor(overtime.status),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            overtime.status ?? "-",
-            style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-        ),
+        StatusBadge(status: overtime.status), // ✅ pakai StatusBadge
       ],
     );
   }
 
   Widget _buildDetailSection() {
-    final isSameDay = overtime.overtimeDate != null && overtime.endDate != null 
-      ? DateTime.parse(overtime.overtimeDate!).isAtSameMomentAs(DateTime.parse(overtime.endDate!))
-      : false;
+    final isSameDay = overtime.overtimeDate != null &&
+            overtime.endDate != null
+        ? DateTime.parse(overtime.overtimeDate!)
+            .isAtSameMomentAs(DateTime.parse(overtime.endDate!))
+        : false;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,15 +86,17 @@ class OvertimeDetailPage extends StatelessWidget {
         // Tanggal Mulai
         _buildInfoRow(
           label: 'Tanggal Mulai',
-          value: DateFormat('dd MMMM yyyy').format(DateTime.parse(overtime.overtimeDate!)),
+          value: DateFormat('dd MMMM yyyy')
+              .format(DateTime.parse(overtime.overtimeDate!)),
           icon: Icons.calendar_today,
         ),
         if (!isSameDay) ...[
           const SizedBox(height: 16),
-          // Tanggal Selesai (hanya ditampilkan jika berbeda dari Tanggal Mulai)
+          // Tanggal Selesai
           _buildInfoRow(
             label: 'Tanggal Selesai',
-            value: DateFormat('dd MMMM yyyy').format(DateTime.parse(overtime.endDate!)),
+            value: DateFormat('dd MMMM yyyy')
+                .format(DateTime.parse(overtime.endDate!)),
             icon: Icons.calendar_today,
           ),
         ],
@@ -175,7 +158,8 @@ class OvertimeDetailPage extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 value,
-                style: const TextStyle(fontSize: 16, color: Colors.black87),
+                style:
+                    const TextStyle(fontSize: 16, color: Colors.black87),
               ),
             ],
           ),

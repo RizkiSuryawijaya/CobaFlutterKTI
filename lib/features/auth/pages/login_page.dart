@@ -31,14 +31,13 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        // Menambahkan gradasi warna pada background
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF89CFF0), // Baby Blue
-              Color(0xFF4682B4), // Steel Blue
+              Color(0xFF6DD5FA), // Light Blue
+              Color(0xFF2980B9), // Deep Blue
             ],
           ),
         ),
@@ -48,37 +47,64 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo atau ikon aplikasi
-                const Icon(
-                  Icons.business_center,
-                  size: 100,
-                  color: Colors.white,
+                // Logo dengan efek glow
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  child: const Icon(
+                    Icons.business_center,
+                    size: 80,
+                    color: Colors.white,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  "ESS Lembur App",
+                  "Overtime System",
                   style: TextStyle(
-                    fontSize: 32,
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
+                    letterSpacing: 1.5,
                     shadows: [
                       Shadow(
-                        blurRadius: 10.0,
-                        color: Colors.black26,
+                        blurRadius: 12.0,
+                        color: Colors.black38,
                         offset: Offset(2.0, 2.0),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 50),
-                // Card untuk membungkus form login
-                Card(
-                  elevation: 10,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                const SizedBox(height: 40),
+
+                // Card transparan (glass effect)
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.25),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 1,
+                    ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(24.0),
+                    padding: const EdgeInsets.all(28.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -86,62 +112,78 @@ class _LoginPageState extends State<LoginPage> {
                           "Masuk ke Akun Anda",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF1976D2),
+                            color: Colors.white,
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 25),
+
+                        // Email field
                         TextField(
                           controller: emailController,
                           keyboardType: TextInputType.emailAddress,
+                          style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.1),
                             labelText: "Email",
+                            labelStyle: const TextStyle(color: Colors.white70),
                             hintText: "example@company.com",
-                            prefixIcon: const Icon(Icons.email, color: Color(0xFF1976D2)),
+                            hintStyle: const TextStyle(color: Colors.white54),
+                            prefixIcon: const Icon(Icons.email, color: Colors.white),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(15),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: const BorderSide(color: Colors.white70),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFF1976D2), width: 2),
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: const BorderSide(color: Colors.white, width: 2),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 18),
+
+                        // Password field
                         TextField(
                           controller: passwordController,
                           obscureText: true,
+                          style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.1),
                             labelText: "Password",
+                            labelStyle: const TextStyle(color: Colors.white70),
                             hintText: "Masukkan password Anda",
-                            prefixIcon: const Icon(Icons.lock, color: Color(0xFF1976D2)),
+                            hintStyle: const TextStyle(color: Colors.white54),
+                            prefixIcon: const Icon(Icons.lock, color: Colors.white),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(15),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: const BorderSide(color: Colors.white70),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFF1976D2), width: 2),
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: const BorderSide(color: Colors.white, width: 2),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 28),
+
+                        // Tombol login
                         Obx(() {
                           return auth.isLoading.value
                               ? const Center(
                                   child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1976D2)),
+                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                   ),
                                 )
-                              : ElevatedButton.icon(
+                              : ElevatedButton(
                                   onPressed: () {
                                     final email = emailController.text.trim();
                                     final password = passwordController.text.trim();
@@ -150,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                                         "Error",
                                         "Email & Password wajib diisi",
                                         snackPosition: SnackPosition.BOTTOM,
-                                        backgroundColor: Colors.red,
+                                        backgroundColor: Colors.redAccent,
                                         colorText: Colors.white,
                                         margin: const EdgeInsets.all(10),
                                       );
@@ -158,19 +200,18 @@ class _LoginPageState extends State<LoginPage> {
                                       auth.login(email, password);
                                     }
                                   },
-                                  icon: const Icon(Icons.login),
-                                  label: const Text(
-                                    "Login",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF1976D2),
-                                    foregroundColor: Colors.white,
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: Colors.blue[800],
                                     padding: const EdgeInsets.symmetric(vertical: 16),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(15),
                                     ),
-                                    elevation: 5,
+                                    elevation: 8,
+                                  ),
+                                  child: const Text(
+                                    "Login",
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                   ),
                                 );
                         }),
@@ -178,6 +219,16 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 20),
+
+                // Text footer
+                const Text(
+                  "© 2025 PT KTI - All Rights Reserved",
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
+                  ),
+                )
               ],
             ),
           ),

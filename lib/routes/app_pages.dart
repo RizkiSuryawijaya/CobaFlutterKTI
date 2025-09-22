@@ -1,61 +1,62 @@
-import 'app_routes.dart';
 import 'package:get/get.dart';
+
+// Auth
 import '../features/auth/pages/login_page.dart';
 import '../features/auth/pages/admin_dashboard_page.dart';
 import '../features/auth/pages/karyawan_dashboard_page.dart';
-import '../features/overtime/pages/overtime_list_page.dart';
-import '../features/overtime/pages/apply_overtime_page.dart';
+
+// Overtime
 import '../features/overtime/controllers/ess_overtime_request_controller.dart';
-import '../features/reason/controllers/ess_reason_ot_controller.dart';
-import '../features/reason/models/ess_reason_ot.dart';
-import '../features/overtime/pages/update_overtime_page.dart';
-import '../features/reason/pages/reason_list_page.dart';
-import '../features/reason/pages/update_reason_page.dart';
-import '../features/reason/pages/create_reason_page.dart';
+import '../features/overtime/pages/overtime/overtime-list/ess_overtime_list_page.dart';
+import '../features/overtime/pages/overtime/overtime-apply/ess_overtime_apply_page.dart';
+import '../features/overtime/pages/overtime/overtime-list/ess_overtime_update_page.dart';
+import '../features/overtime/pages/overtime/overtime-list/ess_overtime_detail_page.dart';
 
-import '../features/overtime/pages/overtime_history_page.dart';
+// Overtime History
+import '../features/overtime/pages/overtime_history/ess_overtime_history_page.dart';
+import '../features/overtime/pages/overtime_history/ess_overtime_history_detail_page.dart';
 
-import '../features/overtime/pages/overtime_withdraw_page.dart';
+// Config Overtime
+import '../features/overtime/pages/config-overtime-page/ess_overtime_config_list_page.dart';
+import '../features/overtime/pages/config-overtime-page/ess_overtime_config_create_page.dart';
+import '../features/overtime/pages/config-overtime-page/ess_overtime_config_update_page.dart';
 
-import '../features/overtime/pages/config-overtime-page/config_list_page.dart';
-import '../features/overtime/pages/config-overtime-page/config_create_page.dart';
-import '../features/overtime/pages/config-overtime-page/config_update_page.dart';
-import '../features/overtime/pages/overtime_history_detail_page.dart';
+// Reason (submodule of Overtime)
+import '../features/reason/controllers/ess-overtime-reason-controller.dart';
+import '../features/reason/models/ess-overtime-reason.dart';
+import '../features/reason/pages/ess-overtime-reason-list-page.dart';
+import '../features/reason/pages/ess-overtime-reason-create-page.dart';
+import '../features/reason/pages/ess-overtime-reason-update-page.dart';
 
-import '../features/overtime/pages/overtime_detail_page.dart';
+// Routes
+import 'app_routes.dart';
+
+
 
 class AppPages {
   static final routes = [
-    // Auth
+
+    // ================= AUTH =================
     GetPage(name: AppRoutes.login, page: () => const LoginPage()),
 
     // Dashboard
-    GetPage(
-      name: AppRoutes.adminDashboard,
-      page: () => const AdminDashboardPage(),
-    ),
-    GetPage(
-      name: AppRoutes.karyawanDashboard,
-      page: () => const EmployeeDashboardPage(),
-    ),
+    GetPage(name: AppRoutes.adminDashboard, page: () => const AdminDashboardPage()),
+    GetPage(name: AppRoutes.karyawanDashboard, page: () => const EmployeeDashboardPage()),
 
-    // Overtime
+    // ================= OVERTIME =================
     GetPage(
       name: AppRoutes.overtimeList,
       page: () => const OvertimeListPage(),
       binding: BindingsBuilder(() {
-        Get.lazyPut<EssOvertimeRequestController>(
-          () => EssOvertimeRequestController(),
-        );
-        Get.lazyPut<EssReasonOTController>(() => EssReasonOTController());
+        Get.lazyPut(() => EssOvertimeRequestController());
+        Get.lazyPut(() => EssReasonOTController());
       }),
     ),
 
-    // Overtime Detail
     GetPage(
       name: AppRoutes.overtimeDetail,
       page: () {
-        final lembur = Get.arguments; // data lembur dilempar lewat arguments
+        final lembur = Get.arguments;
         return OvertimeDetailPage(overtime: lembur);
       },
       binding: BindingsBuilder(() {
@@ -63,17 +64,15 @@ class AppPages {
       }),
     ),
 
-    // / Apply Overtime
     GetPage(
       name: AppRoutes.applyOvertime,
       page: () => const ApplyOvertimePage(),
       binding: BindingsBuilder(() {
-        Get.lazyPut<EssOvertimeRequestController>(
-          () => EssOvertimeRequestController(),
-        );
-        Get.lazyPut<EssReasonOTController>(() => EssReasonOTController());
+        Get.lazyPut(() => EssOvertimeRequestController());
+        Get.lazyPut(() => EssReasonOTController());
       }),
     ),
+
     GetPage(
       name: AppRoutes.updateOvertime,
       page: () {
@@ -82,22 +81,23 @@ class AppPages {
       },
     ),
 
-    // Reason
+    // ================= REASON =================
     GetPage(
       name: AppRoutes.createReason,
       page: () => CreateReasonPage(),
       binding: BindingsBuilder(() {
-        Get.lazyPut<EssReasonOTController>(() => EssReasonOTController());
+        Get.lazyPut(() => EssReasonOTController());
       }),
     ),
 
     GetPage(
       name: AppRoutes.reasonList,
-      page: () => ReasonListPage(),
+      page: () => const ReasonListPage(),
       binding: BindingsBuilder(() {
-        Get.lazyPut<EssReasonOTController>(() => EssReasonOTController());
+        Get.lazyPut(() => EssReasonOTController());
       }),
     ),
+
     GetPage(
       name: AppRoutes.updateReason,
       page: () {
@@ -105,13 +105,10 @@ class AppPages {
         return UpdateReasonPage(reason: reason);
       },
     ),
-    // History
-    GetPage(
-      name: AppRoutes.overtimeHistory,
-      page: () => const OvertimeHistoryPage(),
-    ),
 
-    // History Detail   ini
+    // ================= HISTORY =================
+    GetPage(name: AppRoutes.overtimeHistory, page: () => const OvertimeHistoryPage()),
+
     GetPage(
       name: AppRoutes.overtimeHistoryDetail,
       page: () {
@@ -120,20 +117,11 @@ class AppPages {
       },
     ),
 
-    GetPage(
-      name: AppRoutes.overtimewithdraw,
-      page: () => const OvertimeWithdrawPage(),
-    ),
+    // ================= CONFIG OVERTIME =================
+    GetPage(name: AppRoutes.configOvertimeList, page: () =>  ConfigListPage()),
+    GetPage(name: AppRoutes.configOvertimeCreate, page: () =>  ConfigCreatePage()),
+    GetPage(name: AppRoutes.configOvertimeUpdate, page: () =>  ConfigUpdatePage()),
 
-    // Route untuk Config Overtime
-    GetPage(name: AppRoutes.configOvertimeList, page: () => ConfigListPage()),
-    GetPage(
-      name: AppRoutes.configOvertimeCreate,
-      page: () => ConfigCreatePage(),
-    ),
-    GetPage(
-      name: AppRoutes.configOvertimeUpdate,
-      page: () => ConfigUpdatePage(),
-    ),
+    // ================= SPLASH =================
   ];
 }

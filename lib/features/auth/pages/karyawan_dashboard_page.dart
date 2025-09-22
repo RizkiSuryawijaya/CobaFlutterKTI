@@ -5,129 +5,192 @@ import 'package:fl_chart/fl_chart.dart';
 
 import '../controllers/auth_controller.dart';
 import '../../overtime/controllers/ess_overtime_total_controller.dart';
-import '../../overtime/controllers/overtime_summary_controller.dart';
+import '../../overtime/controllers/ess_overtime_summary_controller.dart';
 import '../../../routes/app_routes.dart';
-import '';
 
-class EmployeeDashboardPage extends StatelessWidget {
+class EmployeeDashboardPage extends StatefulWidget {
   const EmployeeDashboardPage({super.key});
 
   @override
+  State<EmployeeDashboardPage> createState() => _EmployeeDashboardPageState();
+}
+
+class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
+  // Inisialisasi controller hanya sekali di state
+  final AuthController _authController = Get.find();
+  final EssOvertimeTotalController _overtimeTotalController =
+      Get.put(EssOvertimeTotalController());
+  final OvertimeSummaryController _summaryController =
+      Get.put(OvertimeSummaryController());
+
+  @override
+  void initState() {
+    super.initState();
+    // Memuat data saat halaman pertama kali dibuat
+    _overtimeTotalController.fetchTotalOvertime();
+    _summaryController.fetchUserSummary();
+  }
+
+  // Fungsi untuk memuat ulang data saat pull-to-refresh
+  Future<void> _refreshData() async {
+    await _overtimeTotalController.fetchTotalOvertime();
+    await _summaryController.fetchUserSummary();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final authController = Get.find<AuthController>();
-    final overtimeTotalController = Get.put(EssOvertimeTotalController());
-    final summaryController = Get.put(OvertimeSummaryController());
-
-    final user = authController.currentUser.value;
-
-    // 🔹 Fetch summary khusus user
-    summaryController.fetchUserSummary();
+    final user = _authController.currentUser.value;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA),
+      backgroundColor: const Color(0xFFF0F4F8),
       appBar: AppBar(
-        title: const Text("Employee Dashboard"),
-        backgroundColor: Colors.blue[900],
+        title: const Text(
+          "Dasbor Karyawan",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: const Color(0xFF1976D2),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => authController.logout(),
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: () => _authController.logout(),
           ),
         ],
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: Column(
-          children: [
-            _buildHeader(user),
-            const SizedBox(height: 24),
-            Obx(() => _buildStats(overtimeTotalController)),
-            const SizedBox(height: 24),
-            Obx(() => _buildSummaryStatus(summaryController)),
-            const SizedBox(height: 24),
-            _buildInfoCard(),
-            const SizedBox(height: 28),
-            _buildMenuGrid(),
-          ],
+      // Menggunakan RefreshIndicator untuk fitur pull-to-refresh
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 20),
+          child: Column(
+            children: [
+              _buildHeader(user),
+              const SizedBox(height: 20),
+              Obx(() => _buildStats(_overtimeTotalController)),
+              const SizedBox(height: 20),
+              Obx(() => _buildSummaryStatus(_summaryController)),
+              const SizedBox(height: 20),
+              _buildMenuGrid(),
+              const SizedBox(height: 20),
+              _buildInfoCard(),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // ================= HEADER =================
+  // ==================== WIDGET HEADER ====================
   Widget _buildHeader(user) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF1976D2), Color(0xFF42A5F5)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: Color(0xFF1976D2),
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(32),
-          bottomRight: Radius.circular(32),
+          bottomLeft: Radius.circular(30),
+          bottomRight: Radius.circular(30),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 5),
+          ),
+        ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 40,
-            backgroundColor: Colors.white,
-            child: Icon(
-              Icons.person,
-              size: 48,
-              color: Colors.blue[900],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            user?.name ?? 'Employee',
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              'Role: ${user?.role ?? '-'}',
-              style: const TextStyle(color: Colors.white, fontSize: 16),
-            ),
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundColor: Colors.white,
+                child: Icon(
+                  Icons.person,
+                  size: 36,
+                  color: Colors.blue[900],
+                ),
+              ),
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user?.name ?? 'Karyawan',
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Jabatan: ${user?.role ?? '-'}',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  // ================= STATISTIK =================
+  // ==================== WIDGET STATISTIK ====================
   Widget _buildStats(EssOvertimeTotalController controller) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: _StatCard(
-              title: 'Total Lembur Anda Bulan Ini',
-              value: controller.isLoading.value ? "..." : controller.totalFormatted,
-              icon: Icons.access_time,
-            ),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 4,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Total Lembur Anda Bulan Ini",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  controller.isLoading.value
+                      ? const CircularProgressIndicator()
+                      : Text(
+                          controller.totalFormatted,
+                          style: const TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1976D2),
+                          ),
+                        ),
+                ],
+              ),
+              const Icon(
+                Icons.access_time_filled,
+                size: 40,
+                color: Color(0xFF1976D2),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  // ================= SUMMARY STATUS =================
+  // ==================== WIDGET RINGKASAN STATUS ====================
   Widget _buildSummaryStatus(OvertimeSummaryController controller) {
     if (controller.isLoading.value) {
       return const Center(child: CircularProgressIndicator());
@@ -135,34 +198,33 @@ class EmployeeDashboardPage extends StatelessWidget {
 
     final summary = controller.summary.value;
     if (summary == null) {
-      return const Text("Summary status tidak tersedia");
+      return const Text("Ringkasan status tidak tersedia");
     }
 
+    // Mengganti label status ke Bahasa Indonesia
     final Map<String, int> summaryData = {
-      'Approved': summary.approved,
-      'Pending': summary.pending,
-      'Rejected': summary.rejected,
-      'Cancel': summary.cancel,
-      'Withdraw': summary.withdraw,
+      'Disetujui': summary.approved,
+      'Menunggu': summary.pending,
+      'Ditolak': summary.rejected,
+      'Dibatalkan': summary.cancel,
+      'Ditarik': summary.withdraw,
     };
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 3,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 4,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "Summary Status Lembur Anda",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                "Ringkasan Status Lembur Anda",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 12),
-
-              // 🔹 Pie Chart
+              const SizedBox(height: 16),
               SizedBox(
                 height: 200,
                 child: PieChart(
@@ -173,31 +235,31 @@ class EmployeeDashboardPage extends StatelessWidget {
                         value: e.value.toDouble(),
                         title: e.value > 0 ? "${e.value}" : "",
                         color: sectionColor,
-                        radius: 50,
+                        radius: 60,
                         titleStyle: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       );
                     }).toList(),
-                    sectionsSpace: 2,
-                    centerSpaceRadius: 40,
+                    sectionsSpace: 3,
+                    centerSpaceRadius: 50,
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-
-              // 🔹 Legends
+              const SizedBox(height: 20),
               Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: [
-                  _StatusChip(label: "Approved", count: summary.approved, color: Colors.green),
-                  _StatusChip(label: "Pending", count: summary.pending, color: Colors.orange),
-                  _StatusChip(label: "Rejected", count: summary.rejected, color: Colors.red),
-                  _StatusChip(label: "Cancel", count: summary.cancel, color: Colors.grey),
-                  _StatusChip(label: "Withdraw", count: summary.withdraw, color: Colors.blueGrey),
-                ],
+                alignment: WrapAlignment.center,
+                spacing: 10,
+                runSpacing: 10,
+                children: summaryData.entries.map((e) {
+                  final sectionColor = _statusColor(e.key);
+                  return _StatusLegend(
+                    label: e.key,
+                    count: e.value,
+                    color: sectionColor,
+                  );
+                }).toList(),
               ),
             ],
           ),
@@ -206,46 +268,58 @@ class EmployeeDashboardPage extends StatelessWidget {
     );
   }
 
-  // Warna status
+  // Fungsi untuk menentukan warna berdasarkan status
   static Color _statusColor(String status) {
     switch (status) {
-      case 'Approved':
-        return Colors.green;
-      case 'Pending':
-        return Colors.orange;
-      case 'Rejected':
-        return Colors.red;
-      case 'Cancel':
-        return Colors.grey;
-      case 'Withdraw':
-        return Colors.blueGrey;
+      case 'Disetujui':
+        return const Color(0xFF4CAF50);
+      case 'Menunggu':
+        return const Color(0xFFFFA000);
+      case 'Ditolak':
+        return const Color(0xFFD32F2F);
+      case 'Dibatalkan':
+        return const Color(0xFF9E9E9E);
+      case 'Ditarik':
+        return const Color(0xFF546E7A);
       default:
-        return Colors.blue;
+        return const Color(0xFF2196F3);
     }
   }
 
-  // ================= INFO CARD =================
+  // ==================== WIDGET INFO CARD ====================
   Widget _buildInfoCard() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         elevation: 2,
+        color: const Color(0xFFE3F2FD),
         child: const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text(
-            'Ajukan lembur sesuai kebutuhan.\nPantau status pengajuan Anda secara berkala.',
-            style: TextStyle(fontSize: 14),
+          padding: EdgeInsets.all(20.0),
+          child: Row(
+            children: [
+              Icon(Icons.info_outline, color: Color(0xFF1976D2), size: 30),
+              SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  'Ajukan lembur sesuai kebutuhan. Pantau status pengajuan Anda secara berkala.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF1976D2),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  // ================= MENU GRID =================
+  // ==================== WIDGET MENU GRID ====================
   Widget _buildMenuGrid() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GridView(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -253,19 +327,19 @@ class EmployeeDashboardPage extends StatelessWidget {
           crossAxisCount: 2,
           mainAxisSpacing: 16,
           crossAxisSpacing: 16,
-          childAspectRatio: 1.0,
+          childAspectRatio: 1.2,
         ),
         children: [
           _MenuCard(
-            title: "Overtime History",
+            title: "Riwayat Lembur",
             icon: Icons.history,
-            color: Colors.blue[700]!,
+            color: const Color(0xFF29B6F6),
             onTap: () => Get.toNamed(AppRoutes.overtimeHistory),
           ),
           _MenuCard(
             title: "Ajukan Lembur",
-            icon: Icons.add,
-            color: Colors.green[700]!,
+            icon: Icons.add_circle,
+            color: const Color(0xFF4CAF50),
             onTap: () => Get.toNamed(AppRoutes.applyOvertime),
           ),
         ],
@@ -274,7 +348,7 @@ class EmployeeDashboardPage extends StatelessWidget {
   }
 }
 
-// ================= STAT CARD =================
+// ==================== STAT CARD ====================
 class _StatCard extends StatelessWidget {
   final String title;
   final String value;
@@ -289,28 +363,36 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: Colors.blue[900], size: 28),
-            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(icon, color: const Color(0xFF1976D2), size: 36),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
             Text(
               value,
-              style: TextStyle(
-                fontSize: 20,
+              style: const TextStyle(
+                fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.blue[900],
+                color: Color(0xFF1976D2),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: TextStyle(fontSize: 13, color: Colors.grey[700]),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -319,7 +401,8 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-// ================= MENU CARD =================
+
+// ==================== MENU CARD ====================
 class _MenuCard extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -338,27 +421,22 @@ class _MenuCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 6,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Container(
-          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              colors: [color.withOpacity(0.9), color],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            borderRadius: BorderRadius.circular(20),
+            color: color,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 40, color: Colors.white),
+              Icon(icon, size: 48, color: Colors.white),
               const SizedBox(height: 12),
               Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 15,
+                  fontSize: 16,
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
                 ),
@@ -372,13 +450,13 @@ class _MenuCard extends StatelessWidget {
   }
 }
 
-// ================= STATUS CHIP =================
-class _StatusChip extends StatelessWidget {
+// ==================== STATUS LEGEND ====================
+class _StatusLegend extends StatelessWidget {
   final String label;
   final int count;
   final Color color;
 
-  const _StatusChip({
+  const _StatusLegend({
     required this.label,
     required this.count,
     required this.color,
@@ -386,11 +464,26 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Chip(
-      label: Text("$label: $count"),
-      backgroundColor: color.withOpacity(0.15),
-      labelStyle: TextStyle(color: color, fontWeight: FontWeight.w600),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(3),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          "$label ($count)",
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 }

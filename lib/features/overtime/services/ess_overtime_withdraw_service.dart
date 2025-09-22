@@ -5,7 +5,7 @@ import '../models/ess_overtime_request.dart';
 import '../../../core/api_service.dart';
 
 class EssOvertimeWithdrawService {
-  static const String _baseUrl = "${ApiService.baseUrl}/lembur";
+  static const String _baseUrl = "${ApiService.baseUrl}/overtime-requests";
 
   //  Ambil token dari SharedPreferences
   static Future<String?> _getToken() async {
@@ -39,25 +39,5 @@ class EssOvertimeWithdrawService {
     }
   }
 
-  // Ambil semua data withdraw user login (GET /lembur/withdraw)
-  static Future<List<EssOvertimeRequest>> getAllWithdraw() async {
-  final headers = await _getHeaders();
-  final response = await http.get(
-    Uri.parse("$_baseUrl/withdraw"),
-    headers: headers,
-  );
-
-  if (response.statusCode == 200) {
-    final json = jsonDecode(response.body);
-
-    // cek apakah responsenya array langsung atau object dengan key data
-    final List data = json is List ? json : json['data'];
-
-    return data.map((e) => EssOvertimeRequest.fromJson(e)).toList();
-  } else {
-    final error = jsonDecode(response.body);
-    throw Exception(error['message'] ?? 'Failed to fetch withdraw requests');
-  }
-}
 
 }

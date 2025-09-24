@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'routes/app_pages.dart';
-import 'routes/app_routes.dart';
-import '/features/auth/controllers/auth_controller.dart';
+import 'features/auth/controllers/auth_controller.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(const MyApp());
+  final authController = Get.put(AuthController(), permanent: true);
+  final initialRoute = await authController.getInitialRoute();
+
+  runApp(MyApp(initialRoute: initialRoute));
 }
+
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String initialRoute;
+  const MyApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -21,14 +25,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: AppRoutes.login,
+      initialRoute: initialRoute,
       getPages: AppPages.routes,
-
-      initialBinding: BindingsBuilder(() {
-        Get.put(AuthController(), permanent: true);
-      }),
     );
   }
 }
-
-

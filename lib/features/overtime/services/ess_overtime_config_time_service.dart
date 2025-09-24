@@ -7,7 +7,6 @@ import '../../../core/api_service.dart';
 class ConfigOvertimeService {
   static const String _baseUrl = "${ApiService.baseUrl}/config-overtime";
 
-  
   static Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
@@ -39,7 +38,6 @@ class ConfigOvertimeService {
   // POST buat config baru
   static Future<EssConfigOvertime> create(EssConfigOvertime config) async {
     final headers = await _getHeaders();
-    print("DEBUG POST body: ${config.toCreateJson()}"); // ✅ Debugging
     final res = await http.post(
       Uri.parse(_baseUrl),
       headers: headers,
@@ -55,11 +53,10 @@ class ConfigOvertimeService {
     }
   }
 
-  // PUT update config overtime
+  // PUT update config overtime biasa
   static Future<EssConfigOvertime> update(
       String id, EssConfigOvertime config) async {
     final headers = await _getHeaders();
-    print("DEBUG PUT body: ${config.toCreateJson()}"); // ✅ Debugging
     final res = await http.put(
       Uri.parse("$_baseUrl/$id"),
       headers: headers,
@@ -75,6 +72,24 @@ class ConfigOvertimeService {
     }
   }
 
+  // PUT update khusus isActive
+  static Future<EssConfigOvertime> updateIsActive(String id, bool isActive) async {
+    final headers = await _getHeaders();
+    final res = await http.put(
+      Uri.parse("$_baseUrl/$id"),
+      headers: headers,
+      body: json.encode({'is_active': isActive}),
+    );
+
+    if (res.statusCode == 200) {
+      final jsonRes = jsonDecode(res.body);
+      return EssConfigOvertime.fromMap(jsonRes['data']);
+    } else {
+      final error = jsonDecode(res.body);
+      throw Exception(error['message'] ?? 'Gagal update status config overtime');
+    }
+  }
+
   // DELETE config overtime
   static Future<void> delete(String id) async {
     final headers = await _getHeaders();
@@ -86,5 +101,3 @@ class ConfigOvertimeService {
     }
   }
 }
-
-

@@ -10,10 +10,27 @@ class AuthController extends GetxController {
   var currentUser = Rxn<User>();
   var token = "".obs;
 
+  /// ✅ Fungsi baru untuk menentukan initial route
+  Future<String> getInitialRoute() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedToken = prefs.getString("token");
+    final savedUser = prefs.getString("user");
+
+    if (savedToken != null && savedUser != null) {
+      token.value = savedToken;
+      currentUser.value = User.fromJson(jsonDecode(savedUser));
+
+      return currentUser.value?.role == "Admin"
+          ? AppRoutes.adminDashboard
+          : AppRoutes.karyawanDashboard;
+    }
+    return AppRoutes.login;
+  }
+
   @override
   void onInit() {
     super.onInit();
-    loadUser(); // cek apakah user masih login saat app dibuka
+    loadUser(); // kalau mau tetap auto-redirect setelah app jalan
   }
 
   Future<void> loadUser() async {
@@ -32,7 +49,6 @@ class AuthController extends GetxController {
         Get.offAllNamed(AppRoutes.karyawanDashboard);
       }
     } else {
-      // kalau belum login, arahkan ke login
       Get.offAllNamed(AppRoutes.login);
     }
   }

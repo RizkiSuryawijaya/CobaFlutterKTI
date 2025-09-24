@@ -4,6 +4,7 @@ class EssConfigOvertime {
   final String id;
   final double monthlyTotalDurationHours;
   final int restTimeMinutes;
+  final bool isActive;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -11,6 +12,7 @@ class EssConfigOvertime {
     required this.id,
     required this.monthlyTotalDurationHours,
     required this.restTimeMinutes,
+    this.isActive = true,
     this.createdAt,
     this.updatedAt,
   });
@@ -20,6 +22,7 @@ class EssConfigOvertime {
     String? id,
     double? monthlyTotalDurationHours,
     int? restTimeMinutes,
+    bool? isActive,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -28,6 +31,7 @@ class EssConfigOvertime {
       monthlyTotalDurationHours:
           monthlyTotalDurationHours ?? this.monthlyTotalDurationHours,
       restTimeMinutes: restTimeMinutes ?? this.restTimeMinutes,
+      isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -40,6 +44,7 @@ class EssConfigOvertime {
       monthlyTotalDurationHours:
           (map['monthly_total_duration_hours'] as num?)?.toDouble() ?? 0.0,
       restTimeMinutes: map['rest_time_minutes'] ?? 0,
+      isActive: map['is_active'] ?? true, // ambil dari API
       createdAt: map['created_at'] != null
           ? DateTime.tryParse(map['created_at'].toString())
           : null,
@@ -49,18 +54,19 @@ class EssConfigOvertime {
     );
   }
 
-  /// Konversi ke Map penuh (biasanya untuk debug saja)
+  /// Konversi ke Map penuh (debug)
   Map<String, dynamic> toMap() {
     return {
       'config_overtime_id': id,
       'monthly_total_duration_hours': monthlyTotalDurationHours,
       'rest_time_minutes': restTimeMinutes,
+      'is_active': isActive,
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };
   }
 
-  /// Konversi ke Map khusus Create/Update (tanpa id, created_at, updated_at)
+  /// Map khusus Create/Update
   Map<String, dynamic> toCreateMap() {
     return {
       'monthly_total_duration_hours': monthlyTotalDurationHours,
@@ -68,8 +74,18 @@ class EssConfigOvertime {
     };
   }
 
-  /// JSON Encode untuk create/update
+  /// Map khusus update isActive
+  Map<String, dynamic> toUpdateIsActiveMap() {
+    return {
+      'is_active': isActive,
+    };
+  }
+
+  /// JSON Encode untuk Create/Update
   String toCreateJson() => json.encode(toCreateMap());
+
+  /// JSON Encode untuk update isActive
+  String toUpdateIsActiveJson() => json.encode(toUpdateIsActiveMap());
 
   /// JSON Decode untuk 1 object
   factory EssConfigOvertime.fromJson(String source) =>

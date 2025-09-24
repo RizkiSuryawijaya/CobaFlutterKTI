@@ -1,7 +1,7 @@
 // file: lib/pages/config_create_page.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../controllers/ess_overtime_config_controller.dart';
+import '../../controllers/ess_overtime_config_time_controller.dart';
 import '../../models/ess_overtime_config.dart';
 
 class ConfigCreatePage extends StatelessWidget {

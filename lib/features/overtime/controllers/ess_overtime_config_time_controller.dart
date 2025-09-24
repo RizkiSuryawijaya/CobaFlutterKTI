@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart'; 
 import 'package:get/get.dart';
 import '../models/ess_overtime_config.dart';
-import '../services/ess_overtime_config_service.dart';
+import '../services/ess_overtime_config_time_service.dart';
 
 class ConfigOvertimeController extends GetxController {
   var configs = <EssConfigOvertime>[].obs;

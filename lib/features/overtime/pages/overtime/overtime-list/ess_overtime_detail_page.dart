@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../models/ess_overtime_request.dart';
 import '../widgets/status_badge.dart';
+
 class OvertimeDetailPage extends StatelessWidget {
   final EssOvertimeRequest overtime;
 
@@ -22,19 +23,19 @@ class OvertimeDetailPage extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Card(
-          elevation: 6,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(),
-                const Divider(height: 32, thickness: 1, color: Colors.black12),
-                _buildDetailSection(),
-              ],
-            ),
+        child: Container(
+          padding: const EdgeInsets.all(24.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.grey.shade300), // kotak
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(),
+              const Divider(height: 32, thickness: 1, color: Colors.black12),
+              _buildDetailSection(),
+            ],
           ),
         ),
       ),
@@ -49,7 +50,7 @@ class OvertimeDetailPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Nama ",
+              "Nama",
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const SizedBox(height: 4),
@@ -158,8 +159,7 @@ class OvertimeDetailPage extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 value,
-                style:
-                    const TextStyle(fontSize: 16, color: Colors.black87),
+                style: const TextStyle(fontSize: 16, color: Colors.black87),
               ),
             ],
           ),

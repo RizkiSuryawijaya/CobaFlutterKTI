@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../controllers/ess_overtime_config_controller.dart';
+import '../../controllers/ess_overtime_config_time_controller.dart';
 import '../../../../routes/app_routes.dart';
+import '../../../overtime/services/ess_overtime_config_time_service.dart';
+import '../../models/ess_overtime_config.dart';
 
 class ConfigListPage extends StatelessWidget {
   final controller = Get.put(ConfigOvertimeController());
@@ -21,7 +23,7 @@ class ConfigListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F2F5), // Ganti background yang lebih soft
+      backgroundColor: const Color(0xFFF0F2F5),
       appBar: AppBar(
         title: const Text(
           "Pengaturan Lembur Karyawan",
@@ -31,7 +33,7 @@ class ConfigListPage extends StatelessWidget {
             fontSize: 20,
           ),
         ),
-        backgroundColor: const Color(0xFF0056D2), // Warna biru yang lebih deep
+        backgroundColor: const Color(0xFF0056D2),
         elevation: 0,
         centerTitle: true,
       ),
@@ -57,7 +59,7 @@ class ConfigListPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.work_off_outlined, // Ganti ikon yang lebih relevan
+                        Icons.work_off_outlined,
                         size: 80,
                         color: Colors.grey.shade400,
                       ),
@@ -95,7 +97,7 @@ class ConfigListPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   side: BorderSide(color: Colors.grey.shade200, width: 1),
                 ),
-                elevation: 1, // Turunkan sedikit elevasi
+                elevation: 1,
                 margin: const EdgeInsets.only(bottom: 12),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -103,10 +105,10 @@ class ConfigListPage extends StatelessWidget {
                   child: Row(
                     children: [
                       CircleAvatar(
-                        backgroundColor: const Color(0xFFE3F2FD), // Warna avatar yang lebih soft
+                        backgroundColor: const Color(0xFFE3F2FD),
                         radius: 28,
                         child: Icon(
-                          Icons.timer_outlined, // Ganti ikon yang lebih modern
+                          Icons.timer_outlined,
                           color: const Color(0xFF1976D2),
                           size: 30,
                         ),
@@ -121,7 +123,7 @@ class ConfigListPage extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF1976D2), // Warna teks yang lebih menyala
+                                color: Color(0xFF1976D2),
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -135,22 +137,55 @@ class ConfigListPage extends StatelessWidget {
                           ],
                         ),
                       ),
+                      // 🔹 Toggle switch untuk aktif/nonaktif
+                      Column(
+                        children: [
+                          Switch(
+                            value: config.isActive,
+                            onChanged: (val) async {
+                              try {
+                                final updatedConfig =
+                                    await ConfigOvertimeService.updateIsActive(
+                                        config.id, val);
+                                controller.configs[index] = updatedConfig;
+                                controller.configs.refresh();
+                              } catch (e) {
+                                Get.snackbar(
+                                  "Gagal",
+                                  "Gagal update status: $e",
+                                  backgroundColor: Colors.red.shade600,
+                                  colorText: Colors.white,
+                                );
+                              }
+                            },
+                            activeColor: Colors.green,
+                            inactiveThumbColor: Colors.red,
+                          ),
+                          Text(
+                            config.isActive ? "Aktif" : "Nonaktif",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: config.isActive ? Colors.green : Colors.red,
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(width: 8),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
                             icon: Icon(Icons.edit,
-                                color: const Color(0xFF64B5F6), size: 24), // Warna ikon edit
+                                color: const Color(0xFF64B5F6), size: 24),
                             tooltip: 'Ubah Pengaturan',
                             onPressed: () {
-                              Get.toNamed(AppRoutes.configOvertimeUpdate,
+                              Get.toNamed(AppRoutes.configOvertimeTimeUpdate,
                                   arguments: config);
                             },
                           ),
                           IconButton(
                             icon: Icon(Icons.delete_forever_outlined,
-                                color: Colors.red.shade400, size: 24), // Warna ikon delete
+                                color: Colors.red.shade400, size: 24),
                             tooltip: 'Hapus Pengaturan',
                             onPressed: () {
                               Get.defaultDialog(
@@ -187,13 +222,13 @@ class ConfigListPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Get.toNamed(AppRoutes.configOvertimeCreate);
+          Get.toNamed(AppRoutes.configOvertimeTimeCreate);
         },
         backgroundColor: const Color(0xFF0056D2),
         foregroundColor: Colors.white,
         elevation: 6,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20), // Sudut yang sedikit lebih besar
+          borderRadius: BorderRadius.circular(20),
         ),
         child: const Icon(Icons.add, size: 30),
       ),

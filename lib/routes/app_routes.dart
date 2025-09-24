@@ -29,9 +29,12 @@ abstract class AppRoutes {
 
   // Tambahan untuk Config Overtime
 
-  static const configOvertimeList = '/config-overtime';
-  static const configOvertimeCreate = '/config-overtime/create';
-  static const configOvertimeUpdate = '/config-overtime/update';
+  static const configMenu = '/config-menu';
+
+
+  static const configOvertimeTimeList = '/config-overtime';
+  static const configOvertimeTimeCreate = '/config-overtime/create';
+  static const configOvertimeTimeUpdate = '/config-overtime/update';
 
 
    static const splash = '/splash';

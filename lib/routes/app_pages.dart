@@ -17,9 +17,11 @@ import '../features/overtime/pages/overtime_history/ess_overtime_history_page.da
 import '../features/overtime/pages/overtime_history/ess_overtime_history_detail_page.dart';
 
 // Config Overtime
-import '../features/overtime/pages/config-overtime-page/ess_overtime_config_list_page.dart';
-import '../features/overtime/pages/config-overtime-page/ess_overtime_config_create_page.dart';
-import '../features/overtime/pages/config-overtime-page/ess_overtime_config_update_page.dart';
+
+import '../features/overtime/pages/config-page-all/ess_overtime_config_all_page.dart';
+import '../features/overtime/pages/config-Time-page/ess_overtime_config_time_list_page.dart';
+import '../features/overtime/pages/config-Time-page/ess_overtime_config_time_create_page.dart';
+import '../features/overtime/pages/config-Time-page/ess_overtime_config_time_update_page.dart';
 
 // Reason (submodule of Overtime)
 import '../features/reason/controllers/ess-overtime-reason-controller.dart';
@@ -118,9 +120,13 @@ class AppPages {
     ),
 
     // ================= CONFIG OVERTIME =================
-    GetPage(name: AppRoutes.configOvertimeList, page: () =>  ConfigListPage()),
-    GetPage(name: AppRoutes.configOvertimeCreate, page: () =>  ConfigCreatePage()),
-    GetPage(name: AppRoutes.configOvertimeUpdate, page: () =>  ConfigUpdatePage()),
+
+    GetPage(name: AppRoutes.configMenu, page: () => const ConfigMenuPage()),
+
+
+    GetPage(name: AppRoutes.configOvertimeTimeList, page: () =>  ConfigListPage()),
+    GetPage(name: AppRoutes.configOvertimeTimeCreate, page: () =>  ConfigCreatePage()),
+    GetPage(name: AppRoutes.configOvertimeTimeUpdate, page: () =>  ConfigUpdatePage()),
 
     // ================= SPLASH =================
   ];

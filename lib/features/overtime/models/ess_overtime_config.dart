@@ -87,17 +87,17 @@ class EssConfigOvertime {
   /// JSON Encode untuk update isActive
   String toUpdateIsActiveJson() => json.encode(toUpdateIsActiveMap());
 
-  /// JSON Decode untuk 1 object
+
   factory EssConfigOvertime.fromJson(String source) =>
       EssConfigOvertime.fromMap(json.decode(source));
 
-  /// JSON Encode untuk 1 object
   String toJson() => json.encode(toMap());
 
-  /// Parse dari JSON array (response getAllConfigs)
   static List<EssConfigOvertime> fromJsonList(String source) {
     final data = json.decode(source);
     final list = data['data'] as List<dynamic>;
     return list.map((e) => EssConfigOvertime.fromMap(e)).toList();
   }
 }
+
+

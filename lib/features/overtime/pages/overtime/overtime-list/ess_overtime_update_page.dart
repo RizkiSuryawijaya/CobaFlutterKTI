@@ -227,109 +227,107 @@ class _UpdateOvertimePageState extends State<UpdateOvertimePage> {
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
-            child: Card(
-              margin: EdgeInsets.zero,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+            child: Container(
+              padding: const EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(8),
               ),
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildFormTitle("Tanggal Lembur"),
-                    _buildTextFormField(
-                      controller: _dateController,
-                      hintText: "Pilih Tanggal",
-                      icon: Icons.calendar_today,
-                      onTap: () => _selectDate(context),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? 'Tanggal wajib diisi' : null,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildFormTitle("Detail Waktu Lembur"),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildTextFormField(
-                            controller: _startTimeController,
-                            hintText: "Waktu Mulai",
-                            icon: Icons.access_time,
-                            onTap: () => _selectTime(context, true),
-                            validator: (value) =>
-                                value == null || value.isEmpty ? 'Wajib' : null,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: _buildTextFormField(
-                            controller: _endTimeController,
-                            hintText: "Waktu Selesai",
-                            icon: Icons.access_time,
-                            onTap: () => _selectTime(context, false),
-                            validator: (value) =>
-                                value == null || value.isEmpty ? 'Wajib' : null,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    if (_isNextDay) _buildNextDayWarning(),
-                    const SizedBox(height: 16),
-                    _buildFormTitle("Alasan Lembur"),
-                    Obx(() {
-                      if (reasonController.isLoading.value &&
-                          reasonController.reasons.isEmpty) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      return _buildTextFormField(
-                        controller: _reasonController,
-                        hintText: "-- Pilih alasan --",
-                        icon: Icons.arrow_drop_down,
-                        onTap: _showReasonPicker,
-                        validator: (value) =>
-                            value == null || value.isEmpty ? 'Alasan wajib diisi' : null,
-                      );
-                    }),
-                    const SizedBox(height: 16),
-                    _buildFormTitle("Keterangan Pengajuan"),
-                    TextFormField(
-                      controller: _remarksController,
-                      maxLines: 5,
-                      decoration: InputDecoration(
-                        hintText: "Masukkan keterangan di sini...",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildFormTitle("Tanggal Lembur"),
+                  _buildTextFormField(
+                    controller: _dateController,
+                    hintText: "Pilih Tanggal",
+                    icon: Icons.calendar_today,
+                    onTap: () => _selectDate(context),
+                    validator: (value) =>
+                        value == null || value.isEmpty ? 'Tanggal wajib diisi' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildFormTitle("Detail Waktu Lembur"),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildTextFormField(
+                          controller: _startTimeController,
+                          hintText: "Waktu Mulai",
+                          icon: Icons.access_time,
+                          onTap: () => _selectTime(context, true),
+                          validator: (value) =>
+                              value == null || value.isEmpty ? 'Wajib' : null,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 32),
-                    Obx(() {
-                      return SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: controller.isLoading.value ? null : _submitForm,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue[900],
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            elevation: 4,
-                          ),
-                          child: controller.isLoading.value
-                              ? const CircularProgressIndicator(color: Colors.white)
-                              : const Text(
-                                  "Perbarui Lembur",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _buildTextFormField(
+                          controller: _endTimeController,
+                          hintText: "Waktu Selesai",
+                          icon: Icons.access_time,
+                          onTap: () => _selectTime(context, false),
+                          validator: (value) =>
+                              value == null || value.isEmpty ? 'Wajib' : null,
                         ),
-                      );
-                    }),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  if (_isNextDay) _buildNextDayWarning(),
+                  const SizedBox(height: 16),
+                  _buildFormTitle("Alasan Lembur"),
+                  Obx(() {
+                    if (reasonController.isLoading.value &&
+                        reasonController.reasons.isEmpty) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return _buildTextFormField(
+                      controller: _reasonController,
+                      hintText: "-- Pilih alasan --",
+                      icon: Icons.arrow_drop_down,
+                      onTap: _showReasonPicker,
+                      validator: (value) =>
+                          value == null || value.isEmpty ? 'Alasan wajib diisi' : null,
+                    );
+                  }),
+                  const SizedBox(height: 16),
+                  _buildFormTitle("Keterangan Pengajuan"),
+                  TextFormField(
+                    controller: _remarksController,
+                    maxLines: 5,
+                    decoration: InputDecoration(
+                      hintText: "Masukkan keterangan di sini...",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  Obx(() {
+                    return SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: controller.isLoading.value ? null : _submitForm,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue[900],
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 4,
+                        ),
+                        child: controller.isLoading.value
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : const Text(
+                                "Perbarui Lembur",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                      ),
+                    );
+                  }),
+                ],
               ),
             ),
           ),

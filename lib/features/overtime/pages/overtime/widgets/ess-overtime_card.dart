@@ -112,7 +112,7 @@ class OvertimeCard extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          "${overtime.totalDuration ?? '-'} jam",
+                          "${overtime.totalDuration ?? '-'} ",
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 13,

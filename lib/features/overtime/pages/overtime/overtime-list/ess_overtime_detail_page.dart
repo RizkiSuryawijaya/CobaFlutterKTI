@@ -112,7 +112,7 @@ class OvertimeDetailPage extends StatelessWidget {
           const SizedBox(height: 16),
           _buildInfoRow(
             label: 'Durasi Total',
-            value: '${overtime.totalDuration} jam',
+            value: '${overtime.totalDuration}',
             icon: Icons.timelapse,
           ),
         ],

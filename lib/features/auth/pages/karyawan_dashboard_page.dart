@@ -40,13 +40,13 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
     final user = _authController.currentUser.value;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F7FC), // Warna latar belakang diserasi
+      backgroundColor: const Color(0xFFF4F7FC),
       appBar: AppBar(
         title: const Text(
           "Dasbor Karyawan",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF1C2B5D), // Warna AppBar diserasi
+        backgroundColor: const Color(0xFF1C2B5D),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
@@ -57,7 +57,7 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
       ),
       body: RefreshIndicator(
         onRefresh: _refreshData,
-        color: const Color(0xFF1C2B5D), // Warna refresh indicator diserasi
+        color: const Color(0xFF1C2B5D),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.only(bottom: 20),
@@ -65,17 +65,13 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
             children: [
               _buildHeader(user),
               const SizedBox(height: 20),
-              Obx(
-                () => _buildStatsCard(_overtimeTotalController),
-              ), // Ganti nama fungsi
+              Obx(() => _buildStatsCard(_overtimeTotalController)),
               const SizedBox(height: 20),
-              Obx(
-                () => _buildSummaryStatusCard(_summaryController),
-              ), // Ganti nama fungsi
+              Obx(() => _buildSummaryStatusCard(_summaryController)),
               const SizedBox(height: 20),
               _buildMenuGrid(),
               const SizedBox(height: 20),
-              _buildInfoAlert(), // Ganti nama fungsi
+              _buildInfoAlert(),
               const SizedBox(height: 20),
             ],
           ),
@@ -88,12 +84,9 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
   Widget _buildHeader(user) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        vertical: 32,
-        horizontal: 24,
-      ), // Padding diserasi
+      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
       decoration: const BoxDecoration(
-        color: Color(0xFF1C2B5D), // Warna header diserasi
+        color: Color(0xFF1C2B5D),
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),
@@ -101,7 +94,7 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
-            blurRadius: 15, // Blur diserasi
+            blurRadius: 15,
             offset: Offset(0, 8),
           ),
         ],
@@ -112,35 +105,40 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
           Row(
             children: [
               CircleAvatar(
-                radius: 32, // Ukuran avatar diserasi
+                radius: 32,
                 backgroundColor: Colors.white,
                 child: Icon(
                   Icons.person,
-                  size: 40, // Ukuran ikon diserasi
+                  size: 40,
                   color: Colors.blue[900],
                 ),
               ),
               const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Halo, ${user?.name ?? 'Karyawan'}!",
-                    style: const TextStyle(
-                      fontSize: 24, // Ukuran font diserasi
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+              // 🔧 FIX: supaya teks fleksibel & tidak overflow
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Halo, ${user?.name ?? 'Karyawan'}!",
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis, // tambahan safety
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Jabatan: ${user?.role ?? '-'}',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
-                      fontSize: 14,
+                    const SizedBox(height: 4),
+                    Text(
+                      'Jabatan: ${user?.role ?? '-'}',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: 14,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -149,7 +147,7 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
     );
   }
 
-  // --- WIDGET CARD STATISTIK DISERASI ---
+  // --- WIDGET CARD STATISTIK ---
   Widget _buildStatsCard(EssOvertimeTotalController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -214,7 +212,7 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
     );
   }
 
-  // --- WIDGET CARD RINGKASAN STATUS DISERASI ---
+  // --- WIDGET CARD RINGKASAN STATUS ---
   Widget _buildSummaryStatusCard(OvertimeSummaryController controller) {
     if (controller.isLoading.value) {
       return const Center(child: CircularProgressIndicator());
@@ -239,12 +237,12 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
       'Ditarik': summary.withdraw,
     };
 
-    final totalRequests =
-        summary.approved +
+    final totalRequests = summary.approved +
         summary.pending +
         summary.rejected +
         summary.cancel +
         summary.withdraw;
+
     if (totalRequests == 0) {
       return const Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),
@@ -265,13 +263,13 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: const Text(
+              const Center(
+                child: Text(
                   "Ringkasan Status Lembur Anda",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ),
-              const SizedBox(height: 24), // Jarak diserasi
+              const SizedBox(height: 24),
               Center(
                 child: SizedBox(
                   height: 200,
@@ -303,7 +301,7 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
                           value: e.value.toDouble(),
                           title: e.value > 0 ? "${e.value}" : "",
                           color: sectionColor,
-                          radius: 70, // Ukuran radius diserasi
+                          radius: 70,
                           titleStyle: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -311,8 +309,8 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
                           ),
                         );
                       }).toList(),
-                      sectionsSpace: 4, // Jarak antar potongan diserasi
-                      centerSpaceRadius: 60, // Ruang tengah diserasi
+                      sectionsSpace: 4,
+                      centerSpaceRadius: 60,
                     ),
                   ),
                 ),
@@ -321,8 +319,8 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
               Center(
                 child: Wrap(
                   alignment: WrapAlignment.center,
-                  spacing: 20, // Spasi diserasi
-                  runSpacing: 16, // Spasi diserasi
+                  spacing: 20,
+                  runSpacing: 16,
                   children: summaryData.entries.map((e) {
                     Color sectionColor;
                     switch (e.key) {
@@ -360,7 +358,7 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
     );
   }
 
-  // --- WIDGET GRID MENU DISERASI ---
+  // --- WIDGET GRID MENU ---
   Widget _buildMenuGrid() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -377,22 +375,21 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
           _MenuCard(
             title: "Riwayat Lembur",
             icon: Icons.history,
-            color: const Color(0xFF388E3C), // Warna diserasi
+            color: const Color(0xFF388E3C),
             onTap: () => Get.toNamed(AppRoutes.overtimeHistory),
           ),
           _MenuCard(
             title: "Ajukan Lembur",
             icon: Icons.add_circle,
-            color: const Color(0xFF0288D1), // Warna diserasi
+            color: const Color(0xFF0288D1),
             onTap: () => Get.toNamed(AppRoutes.applyOvertime),
           ),
-          // Tambahkan Menu Card lainnya sesuai kebutuhan
         ],
       ),
     );
   }
 
-  // --- WIDGET INFO CARD DISERASI ---
+  // --- WIDGET INFO CARD ---
   Widget _buildInfoAlert() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -408,14 +405,14 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
                 Icons.info_outline,
                 color: Color(0xFF1C2B5D),
                 size: 30,
-              ), // Warna ikon diserasi
+              ),
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
                   'Ajukan lembur sesuai kebutuhan. Pantau status pengajuan Anda secara berkala.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.blue[900], // Warna teks diserasi
+                    color: Colors.blue[900],
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -428,7 +425,7 @@ class _EmployeeDashboardPageState extends State<EmployeeDashboardPage> {
   }
 }
 
-// =================== KOMPONEN KARTU MENU DISERASI ===================
+// =================== KOMPONEN KARTU MENU ===================
 class _MenuCard extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -477,7 +474,7 @@ class _MenuCard extends StatelessWidget {
   }
 }
 
-// =================== KOMPONEN LEGEND STATUS DISERASI ===================
+// =================== KOMPONEN LEGEND STATUS ===================
 class _StatusLegend extends StatelessWidget {
   final String label;
   final int count;

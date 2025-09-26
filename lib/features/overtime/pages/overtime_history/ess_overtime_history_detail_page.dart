@@ -87,15 +87,17 @@ class OvertimeHistoryDetailPage extends StatelessWidget {
               _buildDetailRow(
                 icon: Icons.event,
                 label: "Tanggal Mulai",
-                value: DateFormat("dd MMM yyyy")
-                    .format(DateTime.parse(lembur.overtimeDate)),
+                value: DateFormat(
+                  "dd MMM yyyy",
+                ).format(DateTime.parse(lembur.overtimeDate)),
               ),
               if (lembur.endDate != null)
                 _buildDetailRow(
                   icon: Icons.calendar_today,
                   label: "Tanggal Berakhir",
-                  value: DateFormat("dd MMM yyyy")
-                      .format(DateTime.parse(lembur.endDate!)),
+                  value: DateFormat(
+                    "dd MMM yyyy",
+                  ).format(DateTime.parse(lembur.endDate!)),
                 ),
               _buildDetailRow(
                 icon: Icons.access_time,
@@ -105,7 +107,7 @@ class OvertimeHistoryDetailPage extends StatelessWidget {
               _buildDetailRow(
                 icon: Icons.timer,
                 label: "Durasi",
-                value: "${lembur.totalDuration ?? '-'} jam",
+                value: lembur.totalDuration ?? '-',
               ),
               _buildDetailRow(
                 icon: Icons.assignment,
@@ -139,7 +141,6 @@ class OvertimeHistoryDetailPage extends StatelessWidget {
 
               // Dummy Approved Section
               const DummyApprovedSection(), // tinggal dipanggil
-
               // 🔹 Tombol withdraw (kalau masih pending)
               if (lembur.status?.toLowerCase() == 'pending') ...[
                 const SizedBox(height: 12),
